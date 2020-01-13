@@ -1,13 +1,21 @@
 <template>
-  <div>
-    <nuxt />
+  <div class="app-layout">
+    <div class="sidebar">
+      <p>チャンネル一覧</p>
+      <p>#general</p>
+      <p>#random</p>
+      <p>#random</p>
+    </div>
+    <div class="main-content">
+      <nuxt />
+    </div>
   </div>
 </template>
 
 <style>
 html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -51,5 +59,27 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+.app-layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 300px;
+  background: #4a4141;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar p {
+  color: #ddd;
+  padding-top: 4px;
+}
+
+.main-content {
+  width: 100%;
+  background: #f1f1f1;
+  height: 100vh;
 }
 </style>
