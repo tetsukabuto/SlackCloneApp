@@ -11,3 +11,5 @@ More information about the usage of this directory in [the documentation](https:
 layouts はこの Web サイトにおける共通のテンプレートのようなもの
 ヘッダーやフッターなど、どのページでも共通で使われるものを記述する
 <nuxt />は pages フォルダ にある.vue ファイルを表示される
+
+layouts/default.vue チャットチャンネル一覧はチャットルームを切り替えても常に表示される
