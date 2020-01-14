@@ -2,15 +2,63 @@
   <div class="app-layout">
     <div class="sidebar">
       <p>チャンネル一覧</p>
-      <p>#general</p>
-      <p>#random</p>
-      <p>#random</p>
+      <!-- arrayなどの値をくり抱えし表示する場合はv-forディレクティブをつかう。 -->
+      <!-- v-forディレクティブを使用する際は 不具合防止のためにv-bind:key=""も一緒に設定する。 -->
+      <p v-for="channel in channels" v-bind:key="channel.id">
+        <!-- channel.nameとした理由はfirestoreのdocumentのフィールドをnameに -->
+        {{ channel.name }}
+      </p>
     </div>
     <div class="main-content">
       <nuxt />
     </div>
   </div>
 </template>
+
+<script>
+// plugins/firebase.js で定義した db を読み込む
+import { db } from "~/plugins/firebase";
+
+export default {
+  data() {
+    return {
+      channels: []
+    };
+  },
+
+  //mountedはコンポーネントが描画された時に実行するメソッド
+
+  mounted() {
+    //firebaseからデータを取得する場合はchannele idを指定して
+    //db.collection(チャンネルID).doc(ドキュメントID)
+    // db.collection("channels")
+    //   //docidを指定する
+    //   .doc("NjrpungefpOjdiiQB6sY")
+    //   //指定したchannele id,doc idに対してget()を実行することによってdocという値が返ってくる
+    //   .get()
+    //   //.thenはget()が成功した時のみ実行される
+    //   .then(doc => {
+    //     console.log("doc.id: ", doc.id);
+    //     console.log("doc.data(): ", doc.data());
+    //   });
+
+    //全てのdocを取得するのでcollection idを指定
+    db.collection("channels")
+      .get()
+      .then(querySnapshot => {
+        // querySnapshotには複数のドキュメントの情報がある。forEachでdocを一つずつ取得
+        querySnapshot.forEach(doc => {
+          //取得した一つ一つのdocの処理
+          //console.log(doc.id, " => ", doc.data());
+
+          //thisでdataの値を取得して
+          this.channels.push(doc.data());
+        });
+      });
+    console.log(this.channels);
+  }
+};
+</script>
 
 <style>
 html {
