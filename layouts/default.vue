@@ -6,7 +6,12 @@
       <!-- v-forディレクティブを使用する際は 不具合防止のためにv-bind:key=""も一緒に設定する。 -->
       <p v-for="channel in channels" v-bind:key="channel.id">
         <!-- channel.nameとした理由はfirestoreのdocumentのフィールドをnameに -->
-        {{ channel.name }}
+        <!-- {{ channel.name }} -->
+
+        <!-- リンクを生成するにはnuxt-linkを使う toをわたしてあげるとchannelへのリンクが生成される リンク先はchannel.idを取得して判別-->
+        <nuxt-link :to="`/channels/${channel.id}`">{{
+          channel.name
+        }}</nuxt-link>
       </p>
     </div>
     <div class="main-content">
@@ -52,10 +57,20 @@ export default {
           //console.log(doc.id, " => ", doc.data());
 
           //thisでdataの値を取得して
-          this.channels.push(doc.data());
+          //this.channels.push(doc.data());
+
+          //pushする段階でドキュメントのidつまり、channelのidを取得
+          //...doc.data()はスプレッド構文でオブジェクトを展開している
+          //スプレッド構文とは配列やオブジェクトを展開する構文
+          //以下スプレッド構文の例
+          //var channel = {name: 'random'}
+          //...channelがスプレッド構文
+          //console.log({id: 1, ...channel})
+          //cosole.logでの表示結果は以下のようにchannelのオブジェクトが展開されkeyとvalue出力される
+          //=> {id: 1, name: "random"}
+          this.channels.push({ id: doc.id, ...doc.data() });
         });
       });
-    console.log(this.channels);
   }
 };
 </script>
@@ -114,13 +129,14 @@ html {
 }
 
 .sidebar {
+  color: #ddd;
   width: 300px;
   background: #4a4141;
   height: 100vh;
   padding: 20px;
 }
 
-.sidebar p {
+.sidebar p > a {
   color: #ddd;
   padding-top: 4px;
 }
