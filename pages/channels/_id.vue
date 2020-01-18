@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="chats-layout">
-      <Messages />
+      <!--子コンポーネントであるmessagesにdata内のmessages: []を受け渡すには任意のアトリビュート(今回はmessage)を設定 -->
+      <messages :messages="messages" />
     </div>
     <div class="input-layout">
       <chat-form />
