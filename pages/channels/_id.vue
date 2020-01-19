@@ -32,13 +32,35 @@ export default {
     const channelId = this.$route.params.id;
 
     //channelsというコレクションに保存されているdocumentにあるmessagesのコレクションを指定して保存
+    // db.collection("channels")
+    //   .doc(channelId)
+    //   .collection("messages")
+    //   .get()
+    //   .then(querySnapshot => {
+    //     querySnapshot.forEach(doc => {
+    //       this.messages.push({ id: doc.id, ...doc.data() });
+    //     });
+    //   });
+
     db.collection("channels")
       .doc(channelId)
+      //.collection("messages")に対して↓onSnapshotが実行される
       .collection("messages")
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          this.messages.push({ id: doc.id, ...doc.data() });
+      //orderByはfirestoreのメソッドで複数のドキュメントを並び替える。引数にメッセージ送信時に送られてくるcreatedAtで作成日時を呼び出し作成順に並び替える
+      .orderBy("createdAt")
+      //onSnapshotメソッドを使用して、ドキュメントをリッスン(監視)する
+      .onSnapshot(snapshot => {
+        //message collectionにに変更があったら以下の処理を実行
+        //collectionに変化があった時にsnapshotがコールバック関数にわたされる
+        //snapshotはデータベースのコピーのようなものでデータベースに変更があった場合にもsnapshot.docChangesで取得しそれをforEachでいろいろ実行する
+        snapshot.docChanges().forEach(change => {
+          //change.doc で doc が取得できる
+          const doc = change.doc;
+          //firestoreの変更がタイプがadded(更新)されたときにメッセージを追加
+          //データ更新された時以外でもcollectionに保存されているdoc読み込む際もaddedイベントが実行され過去のメッセージも確認できる
+          if (change.type === "added") {
+            this.messages.push({ id: doc.id, ...doc.data() });
+          }
         });
       });
   }
