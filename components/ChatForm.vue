@@ -51,7 +51,14 @@ export default {
       db.collection("channels")
         .doc(channelId)
         .collection("messages")
-        .add({ text: this.text })
+        .add({
+          text: this.text,
+
+          //データ作成時に作成した日時を入力しておき、それを順に並び替えるためcreatedAtを作成
+          //createdAtは作成日時を保存
+          //new Date() で現在の日時を取得してgetTime()で数字のみでその日時の値を取得できるよう変換
+          createdAt: new Date().getTime()
+        })
         .then(() => {
           //メッセージ送信後にテキストエリアを空にしたいのでnullをtextに代入
           this.text = null;
