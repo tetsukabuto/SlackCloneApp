@@ -31,8 +31,12 @@
 <script>
 import { db, firebase } from "~/plugins/firebase";
 
-//ElementUIのモーダルを読み込む設定
 import Vue from "vue";
+//mutationsを使うにはmapMutaionsというメソッドを使う必要あり。vuexが提供しているものを読み込む
+//import { mapMutations } from "vuex";
+
+import { mapActions } from "vuex";
+//ElementUIのモーダルを読み込む設定
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.use(ElementUI);
@@ -50,6 +54,11 @@ export default {
   },
   //methodsはmethods内に独自のfunctionを定義してそれを呼び出す
   methods: {
+    //setUserをこのコンポーネントで利用するためにmethodsにmapMutationsを読み込む
+    //スプレッド構文(...foo)で読み込み配列を展開する
+    //...mapMutations(["setUser"]),
+
+    ...mapActions(["setUser"]),
     openLoginModal() {
       this.dialogVisible = true;
     },
@@ -115,7 +124,12 @@ export default {
           //ユーザー情報を取得して
           const user = result.user;
           //console.logで出力
-          console.log(user);
+          //console.log(user);
+
+          //ログインに成功した時のsetUserでuser情報をセットする
+          this.setUser(user);
+          //stateに反映されているか確認するためconsole.logで出力
+          console.log(this.$store.state.user);
           //ログイン成功したらモーダル閉じる
           this.dialogVisible = false;
         })
