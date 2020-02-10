@@ -9,10 +9,13 @@
         <!-- {{ channel.name }} -->
 
         <!-- リンクを生成するにはnuxt-linkを使う toをわたしてあげるとchannelへのリンクが生成される リンク先はchannel.idを取得して判別-->
-        <nuxt-link :to="`/channels/${channel.id}`">{{
+        <nuxt-link :to="`/channels/${channel.id}`">
+          {{
           channel.name
-        }}</nuxt-link>
+          }}
+        </nuxt-link>
       </p>
+      <p v-if="isAuthenticated" class="logout" v-on:click="logout">ログアウト</p>
     </div>
     <div class="main-content">
       <nuxt />
@@ -22,7 +25,9 @@
 
 <script>
 // plugins/firebase.js で定義した db を読み込む
-import { db } from "~/plugins/firebase";
+// import { db } from "~/plugins/firebase";
+import { db, firebase } from "~/plugins/firebase";
+import { mapActions } from "vuex";
 
 export default {
   data() {
@@ -30,9 +35,31 @@ export default {
       channels: []
     };
   },
-
+  computed: {
+    //ログアウトしているかしていないか判断する
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
+  },
+  methods: {
+    ...mapActions(["setUser"]),
+    logout() {
+      //firebaseでログアウトするにはfirebase.auth().signOut()を使用
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          //ログアウトが成功したときにはsetUserで判断してuserをnullにする※ログアウトする際nullにしないとログアウトリンクとユーザー情報がtextarea横のアイコン画像が残ってしまうため
+          this.setUser(null);
+          window.alert("ログアウトに成功!");
+        })
+        .catch(e => {
+          window.alert("ログアウトに失敗しました");
+          console.log(e);
+        });
+    }
+  },
   //mountedはコンポーネントが描画された時に実行するメソッド
-
   mounted() {
     //firebaseからデータを取得する場合はchannele idを指定して
     //db.collection(チャンネルID).doc(ドキュメントID)
@@ -145,5 +172,10 @@ html {
   width: 100%;
   background: #f1f1f1;
   height: 100vh;
+}
+.logout {
+  position: absolute;
+  bottom: 10px;
+  cursor: pointer;
 }
 </style>
