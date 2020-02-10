@@ -3,13 +3,13 @@
     <div class="thumbnail-container">
       <!-- HTML タグの属性(attributes)でdataの値を扱うにはv-bindを使う必要あり。src以外だとclass、id、style、hrefなど -->
       <!-- v-bindはセミコロンで書き方を省略できる。例えば今回の場合でいうと:srcのように -->
-      <!-- <img v-bind:src="message.user.thumbnail" /> -->
+      <img v-bind:src="message.user.thumbnail" />
     </div>
     <div class="message-container">
       <!-- dataメソッドのmessageの値をmustache構文で表示 -->
       <!-- <div class="user-name">{{ message.user.name }}</div> -->
       <!-- computedで定義された値をHTMLで表示させるには定義したメソッド名をmustache構文内に記述する この場合は{{ diplayName }}-->
-      <!-- <div class="user-name">{{ diplayName }}</div> -->
+      <div class="user-name">{{ diplayName }}</div>
       <div class="message">{{ message.text }}</div>
     </div>
   </div>

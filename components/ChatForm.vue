@@ -1,5 +1,7 @@
 <template>
   <div class="input-container">
+    <!-- userにはphotoURLが保持されている。これはGoogleアカウントのアバターの画像のURLが取得できる※isAuthenticatedでログインの判別をしてtrueだった場合のみ -->
+    <img v-if="isAuthenticated" :src="user.photoURL" class="avatar" />
     <!-- v-onはイベント(HTMLに対して起きる変化)を監視する機能。例えばボタンが押されたとかHTMLが表示されたとか -->
     <!-- フォーム欄をクリックしたときにmethodsで定義したloginを呼び出しポップアップのアラートを出す -->
     <!-- <textarea v-on:click="login"></textarea> -->
@@ -9,11 +11,16 @@
 
     <!-- v-modelはHTMLの値が変わるとJavaScriptのデータの値が変わる仕組みのディレクティブ(双方向データバインディング) -->
     <!-- v-on:keydown.enterはエンターが押されたらaddMessageを実行 -->
-    <textarea
+    <!-- <textarea
       v-model="text"
       v-on:click="openLoginModal"
       v-on:keydown.enter="addMessage"
-    ></textarea>
+    ></textarea>-->
+
+    <!-- ログインしているときにはチャット投稿用フォームを表示 ログインしているかについてはisAuthenticatedがtrueで判断-->
+    <textarea v-model="text" v-if="isAuthenticated" v-on:keydown.enter="addMessage"></textarea>
+    <!-- ログインしていないときにはモーダルが開く用のフォームを表示 ログインしていないかについてはisAuthenticatedがfalseで判断-->
+    <textarea v-model="text" v-else v-on:click="openLoginModal"></textarea>
 
     <!-- ボタン押下でv-model="text"で取得した値をconsol.logで表示 -->
     <!-- <button v-on:click="checkTextValue">値を確認!</button> -->
@@ -21,7 +28,7 @@
     <!-- ElDialogはElementUIのモーダルを表示するコンポーネント -->
     <!-- titleはモーダルに表示されるタイトル -->
     <!-- :visibleはdialogVisibleの値(boolean値)をバインディングしモーダルの表示/非表示の設定を受け取る -->
-    <el-dialog title="" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title :visible.sync="dialogVisible" width="30%">
       <div class="image-container">
         <img src="~/assets/google_sign_in.png" v-on:click="login" />
       </div>
@@ -51,6 +58,15 @@ export default {
       dialogVisible: false,
       text: null
     };
+  },
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+    //ログインしているかしていないか判断するために使用
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
   },
   //methodsはmethods内に独自のfunctionを定義してそれを呼び出す
   methods: {
@@ -91,7 +107,12 @@ export default {
           //データ作成時に作成した日時を入力しておき、それを順に並び替えるためcreatedAtを作成
           //createdAtは作成日時を保存
           //new Date() で現在の日時を取得してgetTime()で数字のみでその日時の値を取得できるよう変換
-          createdAt: new Date().getTime()
+          createdAt: new Date().getTime(),
+          // ユーザ情報までを含んでfirebaseに保存
+          user: {
+            name: this.user.displayName,
+            thumbnail: this.user.photoURL
+          }
         })
         .then(() => {
           //メッセージ送信後にテキストエリアを空にしたいのでnullをtextに代入
@@ -145,8 +166,12 @@ export default {
 .input-container {
   padding: 10px;
   height: 100%;
+  display: flex;
 }
-
+.avatar {
+  height: 100%;
+  width: auto;
+}
 textarea {
   width: 100%;
   height: 100%;
