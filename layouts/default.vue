@@ -66,6 +66,17 @@ export default {
       //ログインしていればユーザー情報を取得できるのでそれをserUserに渡す
       if (user) {
         this.setUser(user);
+        //profiles というユーザ情報を保存するためのコレクションに user.uid を document の id としてデータを保存
+        db.collection("profiles")
+          .doc(user.uid)
+          //setメソッド は id を指定するときに使います
+          //addの場合はdocのidが自動で指定されるがsetを使えば自分で指定できる
+          .set({
+            //ユーザー情報を保存
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL
+          });
       }
     });
     //firebaseからデータを取得する場合はchannele idを指定して
