@@ -61,6 +61,13 @@ export default {
   },
   //mountedはコンポーネントが描画された時に実行するメソッド
   mounted() {
+    //firebase.authのonAuthStateChangedはリロードしてもログイン状態を保持してくれる
+    firebase.auth().onAuthStateChanged(user => {
+      //ログインしていればユーザー情報を取得できるのでそれをserUserに渡す
+      if (user) {
+        this.setUser(user);
+      }
+    });
     //firebaseからデータを取得する場合はchannele idを指定して
     //db.collection(チャンネルID).doc(ドキュメントID)
     // db.collection("channels")
